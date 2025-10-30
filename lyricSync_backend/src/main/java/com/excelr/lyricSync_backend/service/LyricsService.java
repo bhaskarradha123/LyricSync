@@ -14,8 +14,25 @@ public class LyricsService {
     @Autowired
     private WebClient webClient;
 
-
     public Mono<String> getLyrics(String artist, String title) {
-        return null;
+        try {
+            String encodedArtist = URLEncoder.encode(artist, StandardCharsets.UTF_8);
+            String encodedTitle = URLEncoder.encode(title, StandardCharsets.UTF_8);
+
+            String apiUrl = "https://api.lyrics.ovh/v1/" + encodedArtist + "/" + encodedTitle;
+
+            return webClient.get()
+                    .uri(apiUrl)
+                    .retrieve()
+                    .bodyToMono(String.class)
+                    .onErrorResume(ex -> {
+                        ex.printStackTrace();
+                        return Mono.just("{\"error\":\"Lyrics not found or API error\"}");
+                    });
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Mono.just("{\"error\":\"Encoding failed\"}");
+        }
     }
 }
