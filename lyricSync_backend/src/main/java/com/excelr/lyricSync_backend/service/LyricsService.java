@@ -1,12 +1,13 @@
 package com.excelr.lyricSync_backend.service;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
 
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
+import reactor.core.publisher.Mono;
 
 @Service
 public class LyricsService {
@@ -26,12 +27,12 @@ public class LyricsService {
                     .retrieve()
                     .bodyToMono(String.class)
                     .onErrorResume(ex -> {
-                        ex.printStackTrace();
+                        // ex.printStackTrace();
                         return Mono.just("{\"error\":\"Lyrics not found or API error\"}");
                     });
 
         } catch (Exception e) {
-            e.printStackTrace();
+            // e.printStackTrace();
             return Mono.just("{\"error\":\"Encoding failed\"}");
         }
     }
