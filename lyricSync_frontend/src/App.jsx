@@ -1,35 +1,38 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React, { useState } from "react";
+import ReactPlayer from "react-player";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [query, setQuery] = useState("");
+  const [videoId, setVideoId] = useState("");
+
+  const handleSearch = async () => {
+    const res = await fetch(`http://localhost:8080/api/music/search?query=${query}`);
+    
+    const data = await res.json();    
+    setVideoId(data.videoId);
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <div style={{ textAlign: "center", marginTop: "50px" }}>
+      <h2>🎵 Music Player with Spring Boot + React</h2>
+      <input
+        type="text"
+        placeholder="Enter song name..."
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        style={{ padding: "8px", width: "250px" }}
+      />
+      <button onClick={handleSearch} style={{ marginLeft: "10px", padding: "8px" }}>
+        Search
+      </button>
+
+      {videoId && (
+        <div style={{ marginTop: "30px" }}>
+          <ReactPlayer url={`https://www.youtube.com/watch?v=${videoId}`} controls />
+        </div>
+      )}
+    </div>
+  );
 }
 
-export default App
+export default App;
