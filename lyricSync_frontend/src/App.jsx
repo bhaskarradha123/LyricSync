@@ -1,85 +1,185 @@
-import React, {useState, useEffect} from "react";
-import { search, getLyrics } from "./api";
-import SearchBar from "./components/SearchBar";
-import Player from "./components/Player";
+import React, { useState, useRef, useEffect } from "react";
+import { Container, Row, Col, Form, Spinner, Alert } from "react-bootstrap";
+
+import { searchTracks, getLyrics } from "./api";
+import "./index.css";
+import SongCard from "./components/SongCard";
 import LyricsDisplay from "./components/LyricsDisplay";
-import KaraokeSync from "./components/KarokeSync";
+
+/**
+ * App.js
+ * - Search bar to call backend search endpoint
+ * - Displays results as cards (SongCard)
+ * - Single audio element controlled from here (ensures only one track plays)
+ * - Fetches lyrics when a track is played and displays via LyricsDisplay
+ */
 
 function App() {
-  const [results, setResults] = useState([]);
-  const [track, setTrack] = useState(null);
-  const [lyrics, setLyrics] = useState("");
-  const [duration, setDuration] = useState(30); // fallback duration
-  const [mode, setMode] = useState("auto");
-  const [syncMap, setSyncMap] = useState(null);
+  const [query, setQuery] = useState("");
+  const [results, setResults] = useState([]); // list of track objects
+  const [loadingSearch, setLoadingSearch] = useState(false);
+  const [searchError, setSearchError] = useState("");
 
-  const handleSearch = async (q) => {
+  const audioRef = useRef(new Audio()); // single audio element for app
+  const [currentTrackId, setCurrentTrackId] = useState(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+
+  const [lyricsText, setLyricsText] = useState("");
+  const [loadingLyrics, setLoadingLyrics] = useState(false);
+  const [lyricsError, setLyricsError] = useState("");
+
+  // Cleanup on unmount
+  useEffect(() => {
+    const audio = audioRef.current;
+    const onEnded = () => {
+      setIsPlaying(false);
+      setCurrentTrackId(null);
+    };
+    audio.addEventListener("ended", onEnded);
+    return () => {
+      audio.pause();
+      audio.removeEventListener("ended", onEnded);
+    };
+  }, []);
+
+  // When selected audio changes, attach source and play/pause handling
+  async function handlePlay(track) {
+    // If same track is already playing -> pause it
+    if (currentTrackId === track.id && isPlaying) {
+      audioRef.current.pause();
+      setIsPlaying(false);
+      return;
+    }
+
+    // Stop previous audio and reset
+    audioRef.current.pause();
+    audioRef.current.src = ""; // clear
+    setIsPlaying(false);
+    setLyricsText("");
+    setLyricsError("");
+
+    // If preview URL not available: open external link
+    if (!track.preview_url) {
+      window.open(track.external_urls?.spotify, "_blank");
+      return;
+    }
+
+    // Set new source and play
+    audioRef.current.src = track.preview_url;
+    audioRef.current.load();
+
     try {
-      const json = await search(q);
-      // Spotify search JSON — parse to tracks (this is raw JSON)
-      const parsed = typeof json === "string" ? JSON.parse(json) : json;
-      const tracks = parsed.tracks?.items || [];
+      // Play (browser may block autoplay until user gesture — our button click is a gesture)
+      await audioRef.current.play();
+      setIsPlaying(true);
+      setCurrentTrackId(track.id);
+    } catch (err) {
+      console.error("Playback failed:", err);
+      setIsPlaying(false);
+      return;
+    }
+
+    // Fetch lyrics (background)
+    setLoadingLyrics(true);
+    try {
+      const res = await getLyrics(track.artists?.[0]?.name || "", track.name || "");
+      // Expected to return { lyrics: "..." } or { error: "..." } or string
+      let data = res;
+      if (typeof res === "string") {
+        try {
+          data = JSON.parse(res);
+        } catch (e) {
+          // maybe backend returns raw text: treat as lyrics
+          data = { lyrics: res };
+        }
+      }
+      if (data.lyrics) {
+        setLyricsText(data.lyrics);
+      } else if (data.error) {
+        setLyricsError(data.error);
+      } else {
+        // Fallback: if res has nested structure
+        setLyricsText(JSON.stringify(data));
+      }
+    } catch (e) {
+      console.error(e);
+      setLyricsError("Failed to load lyrics");
+    } finally {
+      setLoadingLyrics(false);
+    }
+  }
+
+  function handlePause(track) {
+    if (currentTrackId === track.id) {
+      audioRef.current.pause();
+      setIsPlaying(false);
+    }
+  }
+
+  async function doSearch(e) {
+    e?.preventDefault();
+    if (!query || !query.trim()) return;
+    setLoadingSearch(true);
+    setSearchError("");
+    setResults([]);
+    setLyricsText("");
+    setLyricsError("");
+    try {
+      const json = await searchTracks(query);
+      // spotify API response has tracks.items
+      const tracks = (json.tracks && json.tracks.items) ? json.tracks.items : [];
       setResults(tracks);
     } catch (err) {
       console.error(err);
-      alert("Search failed");
+      setSearchError("Search failed. Try again.");
+    } finally {
+      setLoadingSearch(false);
     }
-  };
-
-  const selectTrack = async (t) => {
-    setTrack(t);
-    // try fetch lyrics using simple heuristics
-    const artist = t.artists?.[0]?.name || "";
-    const title = t.name || "";
-    try {
-      const l = await getLyrics(artist, title);
-      // lyrics.ovh returns { lyrics: "..." }
-      const parsed = typeof l === "string" ? JSON.parse(l) : l;
-      setLyrics(parsed.lyrics || "");
-    } catch (e) {
-      setLyrics("Lyrics not found.");
-    }
-    // duration fallback: use track.duration_ms / 1000 if present
-    if (t.duration_ms) setDuration(t.duration_ms / 1000);
-  };
-
-  const handleProgress = (state) => {
-    // state.playedSeconds available from ReactPlayer preview
-    window.__CURRENT_PLAYER_TIME = state.playedSeconds;
-  };
-
-  const saveSync = (syncArray) => {
-    setSyncMap(syncArray);
-    // optionally POST to backend to persist: saveSync(syncArray)
-  };
+  }
 
   return (
-    <div className="app">
-      <h1>Music Player</h1>
-      <SearchBar onSearch={handleSearch} />
-      <div className="results">
-        {results.map(r => (
-          <div key={r.id} onClick={() => selectTrack(r)}>
-            {r.name} — {r.artists?.map(a => a.name).join(", ")}
-          </div>
-        ))}
-      </div>
+    <Container className="py-4">
+      <h2 className="mb-3">LyricSync</h2>
 
-      <div className="player-area">
-        <Player track={track} onProgress={handleProgress} />
-        <div>
-          <label>
-            Mode:
-            <select value={mode} onChange={e => setMode(e.target.value)}>
-              <option value="auto">Auto-sync</option>
-              <option value="manual">Karaoke (manual)</option>
-            </select>
-          </label>
-          <KaraokeSync onSave={saveSync} />
-          <LyricsDisplay lyricsText={lyrics} mode={mode} duration={duration} syncMap={syncMap} />
-        </div>
+      <Form onSubmit={doSearch}>
+        <Form.Group className="d-flex gap-2">
+          <Form.Control
+            placeholder="Search for a song or artist..."
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+          />
+          <button type="submit" className="btn btn-primary">
+            {loadingSearch ? <Spinner animation="border" size="sm" /> : "Search"}
+          </button>
+        </Form.Group>
+      </Form>
+
+      <hr />
+
+      {searchError && <Alert variant="danger">{searchError}</Alert>}
+
+      <Row xs={1} sm={2} md={3} lg={4} className="g-3">
+        {results.map(track => (
+          <Col key={track.id}>
+            <SongCard
+              track={track}
+              isPlaying={currentTrackId === track.id && isPlaying}
+              onPlay={() => handlePlay(track)}
+              onPause={() => handlePause(track)}
+            />
+          </Col>
+        ))}
+      </Row>
+
+      <hr />
+
+      <div>
+        <h4>Lyrics</h4>
+        {loadingLyrics && <div><Spinner animation="border" size="sm" /> Loading lyrics...</div>}
+        {lyricsError && <Alert variant="warning">{lyricsError}</Alert>}
+        <LyricsDisplay lyricsText={lyricsText} audioRef={audioRef} isPlaying={isPlaying} />
       </div>
-    </div>
+    </Container>
   );
 }
 
