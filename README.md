@@ -93,3 +93,45 @@ mvn spring-boot:run
 
 Default backend server will start at http://localhost:8080
 You can access the frontend at http://127.0.0.1:8000/
+
+---
+
+## UI Preview
+
+---
+
+## 🤝 Contribution
+
+1. **Fork** the repo  
+2. **Create a feature branch**: `git checkout -b feature-name`  
+3. **Commit changes**: `git commit -m "Added new feature"`  
+4. **Push** to GitHub: `git push origin feature-name`  
+5. **Open a Pull Request**  
+
+---
+
+## Author
+Bhaskar Radha (@bhaskarradha123)
+📩 Email: mailmeasradha@gmail.com  
+🔗 LinkedIn: [Post Link]() 
+🔗 Post Link: [Post Link]()
+
+---
+
+## License
+This project is licensed under the MIT License.
+You are free to use, modify, and distribute it with attribution.
+
+## Acknowledgments
+- [Tailwind CSS](https://tailwindcss.com/)
+- [Lucide React](https://lucide.dev/)
+- [Framer Motion](https://www.framer.com/motion/)
+- [Spotify Web API](https://developer.spotify.com/documentation/web-api/)
+- [Lyrics.ovh API](https://lyricsovh.docs.apiary.io/)
+- [React](https://react.dev/)
+- [Spring Boot](https://spring.io/projects/spring-boot)
+
+```
+“Music is the shorthand of emotion — and LyricSync brings it to life.”
+```
+
