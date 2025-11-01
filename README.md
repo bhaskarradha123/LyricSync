@@ -97,7 +97,10 @@ You can access the frontend at http://127.0.0.1:8000/
 ---
 
 ## UI Preview
-
+<img width="1911" height="899" alt="Image" src="https://github.com/user-attachments/assets/a66d2a04-75cc-4581-9381-0b17b352cc6f" />
+<img width="1902" height="881" alt="Image" src="https://github.com/user-attachments/assets/358d1ba3-6cdd-4fae-9c6a-dcaf35050351" />
+<img width="1859" height="881" alt="Image" src="https://github.com/user-attachments/assets/1843d120-db36-46ac-82e2-5681a277ee24" />
+<img width="1870" height="896" alt="Image" src="https://github.com/user-attachments/assets/2b282067-4a1b-47a7-b8e6-c6ce1b9eb975" />
 ---
 
 ## 🤝 Contribution
