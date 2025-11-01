@@ -39,10 +39,4 @@ public class ApiController {
                 .onErrorReturn(ResponseEntity.status(404).body("{\"error\":\"not found\"}"));
     }
 
-    // Example endpoint to accept manual sync timestamps (store in DB or file)
-    @PostMapping("/sync")
-    public ResponseEntity<String> saveSync(@RequestBody String syncJson) {
-        // TODO persist sync data associated with track id / user
-        return ResponseEntity.ok("{\"status\":\"saved\"}");
-    }
 }
