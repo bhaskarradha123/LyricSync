@@ -58,7 +58,7 @@ export default function LyricsDisplay({ lyricsText = "", mode = "auto", duration
   }, [lyricsText, mode, duration, syncMap, full]);
 
   return (
-    <pre className="lyrics whitespace-pre-wrap text-sm text-white/90 leading-relaxed">
+    <pre className="lyrics whitespace-pre-wrap text-sm text-black/90 leading-relaxed">
       {full.slice(0, visibleCount)}
       <span className="cursor">|</span>
     </pre>

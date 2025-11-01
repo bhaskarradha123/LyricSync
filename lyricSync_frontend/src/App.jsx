@@ -48,8 +48,8 @@ function App() {
   return (
     <div
       className={`min-h-screen flex flex-col items-center justify-start p-6 transition-all duration-700 font-modern ${theme === "light"
-          ? "bg-gradient-to-br from-purple-100 via-purple-200 to-purple-300 text-gray-900"
-          : "bg-gradient-to-br from-[#2E0249] via-[#570A57] to-[#A91079] text-white bg-[length:400%_400%] animate-gradient"
+        ? "bg-gradient-to-br from-purple-100 via-purple-200 to-purple-300 text-gray-900"
+        : "bg-gradient-to-br from-[#2E0249] via-[#570A57] to-[#A91079] text-white bg-[length:400%_400%] animate-gradient"
         }`}
     >
       {/* Theme toggle */}
