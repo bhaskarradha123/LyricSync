@@ -41,6 +41,7 @@ It allows users to browse, play, and visually experience lyrics in real time —
 
 ## 📂 Project Structure
 
+```
 LyricSync/
 │
 ├── lyricSync-frontend/ # React + Tailwind frontend
@@ -66,7 +67,7 @@ LyricSync/
 │ ├ |__ SpotifyService.java
 │ └── LyricSyncBackendApplication.java
 └── pom.xml
-
+```
 
 ---
 
