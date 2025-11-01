@@ -110,11 +110,22 @@ You can access the frontend at http://127.0.0.1:8000/
 
 ---
 
-## Author
-**Bhaskar Radha** (@bhaskarradha123)
-📩 Email: mailmeasradha@gmail.com  |
-🔗 LinkedIn: [Post Link]() 
-🔗 Post Link: [Post Link]()
+## 🧑‍💻 Author
+
+**Bhaskar Radha**
+
+<p align="left">
+  <a href="https://bhaskarradha.vercel.app" target="_blank">
+    🌐 <strong>Portfolio</strong>
+  </a><br>
+  <a href="https://linkedin.com/in/bhaskarradha" target="_blank">
+    💼 <strong>LinkedIn</strong>
+  </a><br>
+  <a href="https://github.com/BhaskarRadha" target="_blank">
+    💻 <strong>GitHub</strong>
+  </a>
+</p>
+
 
 ---
 
