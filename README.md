@@ -121,7 +121,7 @@ You can access the frontend at http://127.0.0.1:8000/
   <a href="https://bhaskarradha.vercel.app" target="_blank">
     🌐 <strong>Portfolio</strong>
   </a><br>
-  <a href="https://linkedin.com/in/bhaskarradha" target="_blank">
+  <a href="https://www.linkedin.com/posts/bhaskarradha13_excited-to-share-my-latest-project-activity-7390450279311339520-Vosq/" target="_blank">
     💼 <strong>LinkedIn</strong>
   </a><br>
   <a href="https://github.com/BhaskarRadha" target="_blank">
