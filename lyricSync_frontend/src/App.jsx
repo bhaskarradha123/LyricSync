@@ -27,19 +27,25 @@ function App() {
     }
   };
 
-  const selectTrack = async (t) => {
-    setTrack(t);
-    const artist = t.artists?.[0]?.name || "";
-    const title = t.name || "";
-    try {
-      const l = await getLyrics(artist, title);
-      const parsed = typeof l === "string" ? JSON.parse(l) : l;
-      setLyrics(parsed.lyrics || "");
-    } catch (e) {
-      setLyrics("Lyrics not found.");
-    }
-    if (t.duration_ms) setDuration(t.duration_ms / 1000);
-  };
+ const selectTrack = async (t) => {
+  setTrack(t);
+  setLyrics(""); 
+
+  const artist = t.artists?.[0]?.name || "";
+  const title = t.name || "";
+
+  try {
+    const l = await getLyrics(artist, title);
+    const parsed = typeof l === "string" ? JSON.parse(l) : l;
+    setLyrics(parsed.lyrics || "Lyrics not found.");
+  } catch (e) {
+    // console.error(e);
+    setLyrics("Lyrics not found.");
+  }
+
+  if (t.duration_ms) setDuration(t.duration_ms / 1000);
+};
+
 
   const handleProgress = (state) => {
     window.__CURRENT_PLAYER_TIME = state.playedSeconds;
