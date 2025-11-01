@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import { search, getLyrics } from "./api";
 import SearchBar from "./components/SearchBar";
 import Player from "./components/Player";
@@ -52,20 +52,90 @@ function App() {
     <div className="app">
       <h1>Music Player</h1>
       <SearchBar onSearch={handleSearch} />
-      <div className="results">
-        {results.map(r => (
-          <div key={r.id} onClick={() => selectTrack(r)}>
-            {r.name} — {r.artists?.map(a => a.name).join(", ")}
-          </div>
-        ))}
-      </div>
-
       <div className="player-area">
         <Player track={track} onProgress={handleProgress} />
         <div>
-            <LyricsDisplay lyricsText={lyrics} mode={mode} duration={duration} syncMap={syncMap} />
+          <LyricsDisplay lyricsText={lyrics} mode={mode} duration={duration} syncMap={syncMap} />
         </div>
       </div>
+
+      <div className="results">
+        {/* {results.map(r => (
+          <div key={r.id} onClick={() => selectTrack(r)}>
+            {r.name} — {r.artists?.map(a => a.name).join(", ")} 
+          </div>
+        ))} */}
+
+        {/* {results.map(r => (
+          <div
+            key={r.id}
+            className="flex flex-col sm:flex-row justify-between items-center gap-2 p-2 border-b border-gray-700 hover:bg-gray-800 rounded-md cursor-pointer transition"
+            onClick={() => selectTrack(r)}
+          >
+            <div className="text-left flex-1">
+              <span className="font-semibold">{r.name}</span> —{" "}
+              <span className="text-gray-400">{r.artists?.map(a => a.name).join(", ")}</span>
+            </div>
+
+            {r.external_urls?.spotify && (
+              <a
+                href={r.external_urls.spotify}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => e.stopPropagation()} // prevent triggering selectTrack
+                className="text-sm bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-md"
+              >
+                🎧 Open in Spotify
+              </a>
+            )}
+          </div>
+        ))} */}
+
+
+
+
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+  {results.map((r) => (
+    <div
+      key={r.id}
+      className="bg-gray-800 hover:bg-gray-700 rounded-xl p-4 shadow-md transition duration-200 flex flex-col items-center text-center"
+    >
+      {/* Album image — clicking this will start playback */}
+      <img
+        src={r.album?.images?.[0]?.url}
+        alt={r.name}
+        onClick={() => selectTrack(r)}
+        className="w-40 h-40 object-cover rounded-lg mb-3 cursor-pointer hover:scale-105 transition-transform duration-200"
+      />
+
+      {/* Song + artist info */}
+      <div className="flex flex-col items-center">
+        <h3 className="text-lg font-semibold">{r.name}</h3>
+        <p className="text-gray-400 text-sm mb-3">
+          {r.artists?.map((a) => a.name).join(", ")}
+        </p>
+      </div>
+
+      {r.external_urls?.spotify && (
+        <a
+          href={r.external_urls.spotify}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={(e) => e.stopPropagation()} // Prevent triggering selectTrack
+          className="bg-green-500 hover:bg-green-600 text-white text-sm px-4 py-2 rounded-md mt-auto"
+        >
+          🎧 Open in Spotify
+        </a>
+      )}
+    </div>
+  ))}
+</div>
+
+
+      </div>
+
+
     </div>
   );
 }
