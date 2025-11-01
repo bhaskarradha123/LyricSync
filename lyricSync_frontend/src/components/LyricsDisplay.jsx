@@ -4,13 +4,11 @@ export default function LyricsDisplay({ lyricsText = "", mode = "auto", duration
   const rafRef = useRef(null);
   const timerRef = useRef(null);
 
-  // flatten lyrics to single string
   const full = (lyricsText || "").replace(/\r/g, "");
 
   useEffect(() => {
     setVisibleCount(0);
 
-    // clear any previous timers/frames
     if (rafRef.current) {
       cancelAnimationFrame(rafRef.current);
       rafRef.current = null;
